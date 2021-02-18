@@ -1,0 +1,321 @@
+<template>
+  <div class="hp-mall-index">
+    <!-- <div>
+      <van-search value="{{ value }}"   shape="round" background="#4fc08d" placeholder="搜索股票" />
+    </div> -->
+    <div class="hp-mall-index-header" v-if="board.length > 0">
+      <div v-for="board" class="hp-mall-index-header-item {{item.changePercent < 0 ? 'is-down' :'is-up'}}">
+        <div class="hp-mall-index-header-item-text">{{item.name}}</div>
+        <div class="hp-mall-index-header-item-count {{item.changePercent < 0 ? 'is-down' :'is-up'}}">{{item.price}}</div>
+        <div class="hp-mall-index-header-item-change {{item.changePercent < 0 ? 'is-down' :'is-up'}}">{{item.changePercent}}%</div>
+      </div>
+    </div>
+    <div class="hp-mall-index-northCapital" v-if="board.length > 0">
+      <div class="hp-mall-index-northCapital-title">
+        <div class="hp-mall-index-northCapital-name">大盘实时成交量</div>
+        <div class="hp-mall-index-northCapital-time">数据日期：2021-01-28</div>
+      </div>
+      <div class="hp-mall-index-northCapital-message">当日上证成交金额{{board[0].turnover / 10000}}亿，深证成交量{{board[1].turnover / 10000}}亿，创业板成交量{{board[2].turnover / 10000}}亿。</div>
+    </div>
+    <div class="hp-mall-index-northCapital">
+      <div class="hp-mall-index-northCapital-title">
+        <div class="hp-mall-index-northCapital-name">北向资金实时流入</div>
+        <div class="hp-mall-index-northCapital-time">数据日期：2021-01-28</div>
+      </div>
+      <div class="hp-mall-index-northCapital-message">当日北向资金总流入-62亿，沪股通流入-34亿，深股通流入-28亿。</div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../common/eventHub';
+  import api from '../utils/api'
+  import {common, request} from '../utils/index.js'
+  import * as echarts from '../components/ec-canvas/echarts';
+  // import testMixin from '../mixins/test'
+  wepy.page({
+    config: { navigationBarTitleText: 'test' },
+
+    hooks: {
+
+    },
+    mixins: [common, request],
+
+    data: {
+      ecTurnover: {
+        onInit: {},
+      },
+      ecNouth: {
+        onInit: {},
+      },
+      board: []
+    },
+
+    computed: {
+
+    },
+    async onLoad() {
+      this.getBoard()
+      this.ecTurnover.onInit = this.initTurnoverChart;
+      this.ecNouth.onInit = this.initNouthChart;
+    },
+
+    methods: {
+      //获取大盘数据
+      async getBoard(){
+        const data = await this.api(api.common.apiGetBoard)
+        data.data[1] = data.data.splice(3, 1, data.data[1])[0];
+        data.data[2] = data.data.splice(5, 1, data.data[2])[0];
+        if (data && data.data.length > 0) {
+          this.board = data.data.map(item => {
+            item.changePercent = Number(item.changePercent)
+            return item
+          })
+        }
+      },
+
+      initTurnoverChart(canvas, width, height, dpr) {
+        const chart = echarts.init(canvas, null, {
+          width: width,
+          height: height,
+          devicePixelRatio: dpr // new
+        });
+        canvas.setChart(chart);
+
+        var option = {
+          legend: {
+            data: [],
+            top: 50,
+            left: 'center',
+            z: 100
+          },
+          grid: {
+            top:20,
+            bottom:10,
+            containLabel: true
+          },
+          tooltip: {
+            show: true,
+            trigger: 'axis'
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['2021.1.1','','','','','','','','','','','','','','','','','','','','','','','','','','','','','2021.1.30'],
+            axisTick: {    // 坐标轴 刻度
+              show: false,  // 是否显示
+            },
+            axisLabel: {    // 坐标轴标签
+              show: true,  // 是否显示
+              interval: 0
+            },
+            // show: false
+          },
+          yAxis: {
+            x: 'center',
+            type: 'value',
+            splitLine: {
+              lineStyle: {
+                type: 'dashed'
+              }
+            },
+            axisTick: {    // 坐标轴 刻度
+              show: false,  // 是否显示
+            },
+            // show: false
+          },
+          series: [{
+            name: '成交量',
+            type: 'line',
+            smooth: true,
+            data: [18, 36, 65, 30, 78, 40, 33,18, 36, 65, 30, 78, 40, 33,18, 36, 65, 30, 78, 40, 33,18, 36, 65, 30, 78, 40, 33,23,34]
+          }]
+        };
+
+        chart.setOption(option);
+        return chart;
+      },
+      initNouthChart (canvas, width, height, dpr) {
+        const chart = echarts.init(canvas, null, {
+          width: width,
+          height: height,
+          devicePixelRatio: dpr // 像素
+        });
+        canvas.setChart(chart);
+
+        var option = {
+          legend: {
+            data: [],
+            left: '10%'
+          },
+          toolbox: {
+          },
+          tooltip: {
+            show: true,   // 是否显示提示框，默认为true
+            trigger: 'item', // 数据项图形触发
+            axisPointer: {   // 指示样式
+              type: 'shadow',
+              axis: 'auto'
+            },
+            padding: 5,
+            textStyle: {   // 提示框内容的样式
+              color: '#fff'
+            }
+          },
+          xAxis: {
+              type : 'category',
+              data: ['2021.1.1','','','','','','','','','','','','','','','','','','','','','','','','','','','','','2021.1.30'],
+              boundaryGap : true,
+              show : true,
+              axisLine: {show: false,},
+              axisLabel: {    // 坐标轴标签
+                show: true,  // 是否显示
+                interval: 0
+              },
+              splitLine: {show: false},
+              splitArea: {show: false},
+              axisTick: {    // 坐标轴 刻度
+                show: false,  // 是否显示
+              },
+          },
+          yAxis: {
+              axisLine: {show: false,},
+              axisTick: {    // 坐标轴 刻度
+                show: false,  // 是否显示
+              },
+              splitLine: {    // gird 区域中的分割线
+              show: true,   // 是否显示
+              lineStyle: {
+                color: '#eeeeee',
+                width: 1,
+                type: 'solid'
+              }
+            },
+          },
+          grid: {
+              bottom: 30,
+              top:10,
+          },
+          series: [
+            {
+                name: '流入',
+                type: 'bar',
+                stack: 'one',
+                emphasis: {},
+                data: [10,  {
+                   value: -20,
+                    itemStyle: {
+                        color: 'green'
+                    }
+                }, 20, -14,14,-20, 74,-14,20, -14,74,20, -14,14,-20, 74,-14,20, -14,74,20, -14,74,-20, 74,-14,20, -14,74,-30],
+            }
+          ]
+        };
+        chart.setOption(option);
+        return chart;
+      }
+    },
+
+    onReachBottom() {
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '涨停助手',
+    usingComponents: {
+      "van-button": "../components/vant/button/index",
+      "van-search": "../components/vant/search/index",
+      "van-image": "../components/vant/image/index",
+      "van-tag": "../components/vant/tag/index",
+      "van-loading": "../components/vant/loading/index",
+      "van-tab": "../components/vant/tab/index",
+      "van-tabs": "../components/vant/tabs/index",
+      "ec-canvas": "../components/ec-canvas/ec-canvas"
+    }
+}
+</config>
+
+<style lang="scss">
+@import "../scss/output.scss";
+  @include b(index){
+    padding: 0 0 0;
+    @include e(header){
+      display: flex;
+      padding: 0 20px;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    @include e(header-item){
+      background: linear-gradient(to bottom, #e9a9a9, #ffffff);
+      flex: 0 0 100px;
+      text-align: center;
+      border-radius: 10px;
+      padding: 15px 0;
+      margin-right: 20px;
+      @include when(down){
+        background: linear-gradient(to bottom, #bdddc3, #ffffff);
+      }
+      @include when(up){
+        background: linear-gradient(to bottom, #e9a9a9, #ffffff);
+      }
+    }
+    @include e(header-item-text){
+      font-weight: 500;
+      font-size: 12px;
+    }
+    @include e(header-item-count){
+      color: #15991b;
+      font-weight: bold;
+      font-size: 18px;
+      @include when(up){
+        color: #d82f2f;
+      }
+    }
+    @include e(header-item-change){
+      color: #15991b;
+      font-weight: 500;
+      font-size: 12px;
+      @include when(up){
+        color: #d82f2f;
+      }
+    }
+    @include e(northCapital){
+      padding: 0 20px;
+      margin-top: 20px;
+    }
+    @include e(northCapital-title){
+      display: flex;
+      align-items: flex-end;
+    }
+    @include e(northCapital-name){
+      font-size: 24px;
+      font-weight: bold;
+    }
+    @include e(northCapital-time){
+      font-size: 14px;
+      flex: 1;
+      text-align: right;
+    }
+    @include e(northCapital-message){
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    @include e(northCapital-canvas){
+      width: 100%;
+      height: 300px;
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

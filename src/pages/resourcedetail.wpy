@@ -1,0 +1,243 @@
+<template>
+  <div class="hp-mall-resourcedetail">
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="question-o" />
+      <span class="hp-mall-resourcedetail-item-text">文件信息</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">{{detail.pinyin}}</span>
+    </div>
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="underway-o" />
+      <span class="hp-mall-resourcedetail-item-text">分享日期</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">{{detail.updateDate}}</span>
+    </div>
+    <ad unit-id="adunit-17c50556455b427f"></ad>
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="video-o" />
+      <span class="hp-mall-resourcedetail-item-text">资源类型</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">{{detail.type}}</span>
+    </div>
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="vip-card-o" />
+      <span class="hp-mall-resourcedetail-item-text">使用方法</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">></span>
+    </div>
+    <div class="hp-mall-resourcedetail-button">
+      <van-button type="primary" @click.stop="openBaidu()" block>获取</van-button>
+    </div>
+    <div class="hp-mall-resourcedetail-footer">
+      免责声明：本程序所有内容均来自互联网分享，仅供自己测试和学习使用，所有版权归原作者所有，如果侵犯了您的权利，请联系客服，我们会在第一时间删除。
+    </div>
+    <!-- <van-popup
+      show="{{ showLinkPopup }}"
+      round
+      position="bottom"
+      custom-style="height: 30%"
+      @click="closeLinkPopup()"
+    >
+      <div class="hp-mall-resourcedetail-linkpopup">
+        <div class="hp-mall-resourcedetail-linkpopup-title">盘口令</div>
+        <div class="hp-mall-resourcedetail-linkpopup-link">链接:https://pan.baidu.com/s/1TgosdffFpuR3hjZBwYpN5Q 提取码:smjx</div>
+        <div class="hp-mall-resourcedetail-linkpopup-botton">
+          <van-button class="hp-mall-resourcedetail-linkpopup-botton-left" @click.stop="copyLink()" block type="primary" size="normal">复制口令</van-button>
+          <van-button class="hp-mall-resourcedetail-linkpopup-botton-right" @click.stop="openBaidu()" block type="primary" size="normal">打开网盘</van-button>
+        </div>
+      </div>
+    </van-popup> -->
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../common/eventHub';
+  import loginMixin from '../utils/common/login'
+  import requestMixin from '../utils/request'
+  import api from '../utils/api'
+  // import testMixin from '../mixins/test'
+
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+
+    hooks: {
+
+    },
+    mixins: [loginMixin, requestMixin],
+
+    data: {
+      showLinkPopup: false,
+      detail: {},
+      id: '',
+    },
+
+    computed: {
+
+    },
+    async onLoad(options) {
+      this.id = options.id;
+      this.getDetail();
+    },
+
+    onShareAppMessage (res) {
+      return {
+        title: '得影-你的影视搜索好帮手',
+        path: `/pages/resourcedetail?id=${this.id}`
+      }
+    },
+
+    methods: {
+      getDetail() {
+        wx.showLoading({title: '加载中'})
+        const db = wx.cloud.database()
+        console.log(this.id)
+        db.collection('movie')
+          .doc(Number(this.id))
+          .get()
+          .then(res => {
+            this.detail = res.data
+            this.detail.shotlink = this.detail.link.substring(27,this.detail.link.length-9)
+            this.detail.pwd = this.detail.link.substring(this.detail.link.length-4)
+            wx.hideLoading()
+          })
+      },
+      openLinkPopup(){
+        this.showLinkPopup = !this.showLinkPopup
+      },
+      closeLinkPopup(){
+        this.showLinkPopup = false
+      },
+      copyLink(){
+        wx.setClipboardData({
+          data: this.detail.link,
+          success (res) {
+            wx.getClipboardData({
+              success (res) {
+                console.log(res.data) // data
+              }
+            })
+          }
+        })
+      },
+      openBaidu(){
+        var path = `pages/netdisk_share/share?imagetyp=0&surl=${this.detail.shotlink}&pwd=${this.detail.pwd}`;
+        wx.navigateToMiniProgram({
+          appId: 'wxdcd3d073e47d1742',
+          path: path,
+          extraData: {
+            foo: 'bar'
+          },
+          envVersion: 'release',   //默认为正式版，咱们提取网盘资料，这里就正式版，如果是自己开发的两个小程序，可以选择"develop" 开发板    "trial" 体验版 "release" 正式版
+          success(res) {
+            console.log(res)
+            // 打开成功
+          }
+        })
+      }
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '得影',
+    navigationBarBackgroundColor: '#fafafa',
+    usingComponents: {
+      "van-button": "../components/vant/button/index",
+      "van-search": "../components/vant/search/index",
+      "van-image": "../components/vant/image/index",
+      "van-tag": "../components/vant/tag/index",
+      "van-icon": "../components/vant/icon/index",
+      "van-popup": "../components/vant/popup/index",
+      "van-loading": "../components/vant/loading/index",
+    }
+}
+</config>
+
+<style lang="scss">
+@import "../scss/output.scss";
+  page{
+    background-color: #fafafa;
+  }
+  @include b(resourcedetail){
+    background-color: #fafafa;;
+    @include e(item){
+      background-color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    @include e(item-icon){
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    @include e(item-text){
+      font-size: 14px;
+    }
+    @include e(item-pinyin){
+      flex: 1;
+      text-align: right;
+      color: #ccc;
+    }
+    @include e(button){
+      width: 60%;
+      margin: 0 auto;
+      margin-top: 40px;
+    }
+    @include e(footer){
+      position: fixed;
+      bottom: 10px;
+      right: 0;
+      left: 0;
+      white-space:normal;
+      word-break:break-all;
+      overflow:hidden;
+      padding: 5px;
+      width: 90%;
+      margin: 0 auto;
+      font-size:12px;
+      border-radius: 5px;
+    }
+    @include e(linkpopup){
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+    }
+    @include e(linkpopup-title){
+      padding: 10px 0;
+    }
+    @include e(linkpopup-link){
+      white-space:normal;
+      word-break:break-all;
+      overflow:hidden;
+      padding: 5px;
+      font-size:12px;
+      background-color: #ccc;
+      border-radius: 5px;
+    }
+    @include e(linkpopup-botton){
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+    }
+    @include e(linkpopup-botton-left){
+      margin-right: 20px;
+      width: 100px;
+    }
+    @include e(linkpopup-botton-right){
+      margin-right: 20px;
+      width: 100px;
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>
