@@ -1,0 +1,150 @@
+<template>
+  <div class="hp-mall-rank">
+    <div class="hp-mall-rank-stock">
+      <div class="hp-mall-rank-stock-title">股票榜单</div>
+      <div class="hp-mall-rank-stock-list">
+        <div class="hp-mall-rank-stock-item" @click="toNorthBoundHold">
+          <div class="hp-mall-rank-stock-item-icon">
+            <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
+          </div>
+          <div class="hp-mall-rank-stock-item-text">北向资金持股</div>
+          <div class="hp-mall-rank-stock-item-arrow">></div>
+        </div>
+        <div class="hp-mall-rank-stock-item" @click="toNorthBoundAdd">
+          <div class="hp-mall-rank-stock-item-icon">
+            <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
+          </div>
+          <div class="hp-mall-rank-stock-item-text">北向资金增持</div>
+          <div class="hp-mall-rank-stock-item-arrow">></div>
+        </div>
+        <div class="hp-mall-rank-stock-item" @click="toDetail">
+          <div class="hp-mall-rank-stock-item-icon">
+            <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
+          </div>
+          <div class="hp-mall-rank-stock-item-text">大宗交易活跃A股</div>
+          <div class="hp-mall-rank-stock-item-arrow">></div>
+        </div>
+        <div class="hp-mall-rank-stock-item" @click="toDetail">
+          <div class="hp-mall-rank-stock-item-icon">
+            <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
+          </div>
+          <div class="hp-mall-rank-stock-item-text">龙虎榜-个股上榜统计</div>
+          <div class="hp-mall-rank-stock-item-arrow">></div>
+        </div>
+        <div class="hp-mall-rank-stock-item" @click="toDetail">
+          <div class="hp-mall-rank-stock-item-icon">
+            <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
+          </div>
+          <div class="hp-mall-rank-stock-item-text">龙虎榜-营业上榜统计</div>
+          <div class="hp-mall-rank-stock-item-arrow">></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../../common/eventHub';
+  import api from '../../utils/api'
+  // import testMixin from '../mixins/test'
+
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+
+    hooks: {
+
+    },
+    mixins: [],
+
+    data: {
+
+    },
+
+    async onLoad() {
+    },
+
+    methods: {
+      toDetail() {
+        wx.showToast({
+          title: '开发中敬请期待',
+          duration: 1000
+        })
+      },
+      toNorthBoundAdd() {
+        wx.navigateTo({
+          url: `/pages/rank/northBoundAdd`
+        })
+      },
+      toNorthBoundHold() {
+        wx.navigateTo({
+          url: `/pages/rank/northBoundHold`
+        })
+      },
+    },
+
+    onReachBottom() {
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '榜单',
+    usingComponents: {
+      "van-button": "../../components/vant/button/index",
+      "van-search": "../../components/vant/search/index",
+      "van-image": "../../components/vant/image/index",
+      "van-tag": "../../components/vant/tag/index",
+      "van-loading": "../../components/vant/loading/index",
+    }
+}
+</config>
+
+<style lang="scss">
+@import "../../scss/output.scss";
+  @include b(rank){
+    @include e(stock){
+      padding: 0 20px;
+    }
+    @include e(stock-title){
+      padding: 10px 0;
+      font-weight: 500;
+      font-size: 20px;
+    }
+    @include e(stock-list){
+    }
+    @include e(stock-item){
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #e9ecec;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    @include e(stock-item-icon){
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      image{
+        width: 100%;
+        height: 100%;
+      }
+    }
+    @include e(stock-item-text){
+      flex: 1;
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

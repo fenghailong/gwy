@@ -50,7 +50,7 @@
   import wepy from '@wepy/core'
   import eventHub from '../common/eventHub';
   import loginMixin from '../utils/common/login'
-  import requestMixin from '../utils/request'
+  // import requestMixin from '../utils/request'
   import api from '../utils/api'
   // import testMixin from '../mixins/test'
 
@@ -62,7 +62,7 @@
     hooks: {
 
     },
-    mixins: [loginMixin, requestMixin],
+    mixins: [loginMixin],
 
     data: {
       showLinkPopup: false,

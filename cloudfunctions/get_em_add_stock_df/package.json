@@ -1,5 +1,5 @@
 {
-  "name": "login",
+  "name": "get_em_add_stock_df",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "wx-server-sdk": "~2.3.2"
+    "request-promise": "^4.2.6",
+    "wx-server-sdk": "~2.3.3"
   }
 }

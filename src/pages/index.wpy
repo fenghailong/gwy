@@ -1,28 +1,74 @@
 <template>
   <div class="hp-mall-index">
-    <!-- <div>
-      <van-search value="{{ value }}"   shape="round" background="#4fc08d" placeholder="搜索股票" />
-    </div> -->
+    <div>
+      <van-search value="{{ value }}"   shape="round"  placeholder="搜索股票" />
+    </div>
     <div class="hp-mall-index-header" v-if="board.length > 0">
-      <div v-for="board" class="hp-mall-index-header-item {{item.changePercent < 0 ? 'is-down' :'is-up'}}">
+      <div v-for="board" class="hp-mall-index-header-item {{item.percent_change < 0 ? 'is-down' :'is-up'}}">
         <div class="hp-mall-index-header-item-text">{{item.name}}</div>
-        <div class="hp-mall-index-header-item-count {{item.changePercent < 0 ? 'is-down' :'is-up'}}">{{item.price}}</div>
-        <div class="hp-mall-index-header-item-change {{item.changePercent < 0 ? 'is-down' :'is-up'}}">{{item.changePercent}}%</div>
+        <div class="hp-mall-index-header-item-count {{item.percent_change < 0 ? 'is-down' :'is-up'}}">{{item.current_price}}</div>
+        <div class="hp-mall-index-header-item-change {{item.percent_change < 0 ? 'is-down' :'is-up'}}">{{item.percent_change}}%</div>
       </div>
     </div>
-    <div class="hp-mall-index-northCapital" v-if="board.length > 0">
-      <div class="hp-mall-index-northCapital-title">
-        <div class="hp-mall-index-northCapital-name">大盘实时成交量</div>
-        <div class="hp-mall-index-northCapital-time">数据日期：2021-01-28</div>
+    <div class="hp-mall-index-content">
+      <div class="hp-mall-index-content-title">
+        <div class="hp-mall-index-content-title-left">
+          <div class="hp-mall-index-content-title-name">大家说</div>
+          <div class="hp-mall-index-content-title-text">股票基金好不好？看看买过的人怎么说</div>
+        </div>
+        <div class="hp-mall-index-content-title-switch">
+          <van-icon name="chart-trending-o" />
+          <text>看基金</text>
+        </div>
       </div>
-      <div class="hp-mall-index-northCapital-message">当日上证成交金额{{board[0].turnover / 10000}}亿，深证成交量{{board[1].turnover / 10000}}亿，创业板成交量{{board[2].turnover / 10000}}亿。</div>
-    </div>
-    <div class="hp-mall-index-northCapital">
-      <div class="hp-mall-index-northCapital-title">
-        <div class="hp-mall-index-northCapital-name">北向资金实时流入</div>
-        <div class="hp-mall-index-northCapital-time">数据日期：2021-01-28</div>
+      <van-tabs active="{{ active }}" bind:change="onChange">
+        <van-tab title="全部"></van-tab>
+        <van-tab title="有色"></van-tab>
+        <van-tab title="石油"></van-tab>
+        <van-tab title="钢铁"></van-tab>
+        <van-tab title="种植业"></van-tab>
+        <van-tab title="采掘"></van-tab>
+        <van-tab title="基础化学"></van-tab>
+        <van-tab title="新材料"></van-tab>
+      </van-tabs>
+      <div class="hp-mall-index-list">
+        <div class="hp-mall-index-item">
+          <div class="hp-mall-index-item-icon">君</div>
+          <div class="hp-mall-index-item-message">
+            <div class="hp-mall-index-item-message-header">
+              <div class="hp-mall-index-item-message-header-name">君正集团</div>
+              <div class="hp-mall-index-item-message-header-code">600342</div>
+            </div>
+            <div class="hp-mall-index-item-message-comment">
+              <div class="hp-mall-index-item-message-comment-people">250人买过</div>
+              <div class="hp-mall-index-item-message-comment-percent">65% 赚钱</div>
+              <van-progress :show-pivot='false' color="#ee0a24" percentage="65" />
+            </div>
+            <div class="hp-mall-index-item-message-button">
+              <van-button class="hp-mall-index-item-message-button-want" plain hairline type="default" block>想买</van-button>
+              <van-button class="hp-mall-index-item-message-button-buyed" plain hairline type="default" block>买过</van-button>
+            </div>
+          </div>
+        </div>
+        <div class="hp-mall-index-item">
+          <div class="hp-mall-index-item-icon">陕</div>
+          <div class="hp-mall-index-item-message">
+            <div class="hp-mall-index-item-message-header">
+              <div class="hp-mall-index-item-message-header-name">陕西黑猫</div>
+              <div class="hp-mall-index-item-message-header-code">600342</div>
+            </div>
+            <div class="hp-mall-index-item-message-comment">
+              <div class="hp-mall-index-item-message-comment-people">250人买过</div>
+              <div class="hp-mall-index-item-message-comment-percent">65% 赚钱</div>
+              <van-progress :show-pivot='false' color="#ee0a24" percentage="65" />
+            </div>
+            <div class="hp-mall-index-item-message-button">
+              <van-button class="hp-mall-index-item-message-button-want" plain hairline type="default" block>想买</van-button>
+              <van-button class="hp-mall-index-item-message-button-buyed" plain hairline type="default" block>买过</van-button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="hp-mall-index-northCapital-message">当日北向资金总流入-62亿，沪股通流入-34亿，深股通流入-28亿。</div>
     </div>
   </div>
 </template>
@@ -32,7 +78,9 @@
   import eventHub from '../common/eventHub';
   import api from '../utils/api'
   import {common, request} from '../utils/index.js'
-  import * as echarts from '../components/ec-canvas/echarts';
+
+  const wxCharts = require('../utils/modules/wxcharts.js');
+  let lineChart = null;
   // import testMixin from '../mixins/test'
   wepy.page({
     config: { navigationBarTitleText: 'test' },
@@ -43,187 +91,41 @@
     mixins: [common, request],
 
     data: {
-      ecTurnover: {
-        onInit: {},
-      },
-      ecNouth: {
-        onInit: {},
-      },
-      board: []
+      active: 0,
+      board: [],
+      nouth_money: {},
     },
 
     computed: {
 
     },
-    async onLoad() {
-      this.getBoard()
-      this.ecTurnover.onInit = this.initTurnoverChart;
-      this.ecNouth.onInit = this.initNouthChart;
+    async onLoad(e) {
+      wx.showLoading({title: '加载中'})
+      await this.getStockDf()
+      wx.hideLoading()
+    },
+
+    onShareAppMessage () {
+      return {
+        title: '选股助手-你的选股好帮手',
+        path: '/pages/index'
+      }
     },
 
     methods: {
       //获取大盘数据
-      async getBoard(){
-        const data = await this.api(api.common.apiGetBoard)
-        data.data[1] = data.data.splice(3, 1, data.data[1])[0];
-        data.data[2] = data.data.splice(5, 1, data.data[2])[0];
-        if (data && data.data.length > 0) {
-          this.board = data.data.map(item => {
-            item.changePercent = Number(item.changePercent)
-            return item
-          })
-        }
-      },
-
-      initTurnoverChart(canvas, width, height, dpr) {
-        const chart = echarts.init(canvas, null, {
-          width: width,
-          height: height,
-          devicePixelRatio: dpr // new
-        });
-        canvas.setChart(chart);
-
-        var option = {
-          legend: {
-            data: [],
-            top: 50,
-            left: 'center',
-            z: 100
-          },
-          grid: {
-            top:20,
-            bottom:10,
-            containLabel: true
-          },
-          tooltip: {
-            show: true,
-            trigger: 'axis'
-          },
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['2021.1.1','','','','','','','','','','','','','','','','','','','','','','','','','','','','','2021.1.30'],
-            axisTick: {    // 坐标轴 刻度
-              show: false,  // 是否显示
-            },
-            axisLabel: {    // 坐标轴标签
-              show: true,  // 是否显示
-              interval: 0
-            },
-            // show: false
-          },
-          yAxis: {
-            x: 'center',
-            type: 'value',
-            splitLine: {
-              lineStyle: {
-                type: 'dashed'
-              }
-            },
-            axisTick: {    // 坐标轴 刻度
-              show: false,  // 是否显示
-            },
-            // show: false
-          },
-          series: [{
-            name: '成交量',
-            type: 'line',
-            smooth: true,
-            data: [18, 36, 65, 30, 78, 40, 33,18, 36, 65, 30, 78, 40, 33,18, 36, 65, 30, 78, 40, 33,18, 36, 65, 30, 78, 40, 33,23,34]
-          }]
-        };
-
-        chart.setOption(option);
-        return chart;
-      },
-      initNouthChart (canvas, width, height, dpr) {
-        const chart = echarts.init(canvas, null, {
-          width: width,
-          height: height,
-          devicePixelRatio: dpr // 像素
-        });
-        canvas.setChart(chart);
-
-        var option = {
-          legend: {
-            data: [],
-            left: '10%'
-          },
-          toolbox: {
-          },
-          tooltip: {
-            show: true,   // 是否显示提示框，默认为true
-            trigger: 'item', // 数据项图形触发
-            axisPointer: {   // 指示样式
-              type: 'shadow',
-              axis: 'auto'
-            },
-            padding: 5,
-            textStyle: {   // 提示框内容的样式
-              color: '#fff'
-            }
-          },
-          xAxis: {
-              type : 'category',
-              data: ['2021.1.1','','','','','','','','','','','','','','','','','','','','','','','','','','','','','2021.1.30'],
-              boundaryGap : true,
-              show : true,
-              axisLine: {show: false,},
-              axisLabel: {    // 坐标轴标签
-                show: true,  // 是否显示
-                interval: 0
-              },
-              splitLine: {show: false},
-              splitArea: {show: false},
-              axisTick: {    // 坐标轴 刻度
-                show: false,  // 是否显示
-              },
-          },
-          yAxis: {
-              axisLine: {show: false,},
-              axisTick: {    // 坐标轴 刻度
-                show: false,  // 是否显示
-              },
-              splitLine: {    // gird 区域中的分割线
-              show: true,   // 是否显示
-              lineStyle: {
-                color: '#eeeeee',
-                width: 1,
-                type: 'solid'
-              }
-            },
-          },
-          grid: {
-              bottom: 30,
-              top:10,
-          },
-          series: [
-            {
-                name: '流入',
-                type: 'bar',
-                stack: 'one',
-                emphasis: {},
-                data: [10,  {
-                   value: -20,
-                    itemStyle: {
-                        color: 'green'
-                    }
-                }, 20, -14,14,-20, 74,-14,20, -14,74,20, -14,14,-20, 74,-14,20, -14,74,20, -14,74,-20, 74,-14,20, -14,74,-30],
-            }
-          ]
-        };
-        chart.setOption(option);
-        return chart;
+      async getStockDf() {
+        let data =await wx.cloud.callFunction({
+          name: 'get_stock_df',
+        })
+        this.board = JSON.parse(data.result).data
       }
     },
-
-    onReachBottom() {
-    }
   });
 </script>
 <config>
 {
-    navigationBarTitleText: '涨停助手',
+    navigationBarTitleText: '选股助手',
     usingComponents: {
       "van-button": "../components/vant/button/index",
       "van-search": "../components/vant/search/index",
@@ -232,7 +134,8 @@
       "van-loading": "../components/vant/loading/index",
       "van-tab": "../components/vant/tab/index",
       "van-tabs": "../components/vant/tabs/index",
-      "ec-canvas": "../components/ec-canvas/ec-canvas"
+      "van-icon": "../components/vant/icon/index",
+      "van-progress": "../components/vant/progress/index"
     }
 }
 </config>
@@ -281,30 +184,104 @@
         color: #d82f2f;
       }
     }
-    @include e(northCapital){
+    @include e(content){
       padding: 0 20px;
+    }
+    @include e(content-title){
+      display: flex;
+      align-items: center;
       margin-top: 20px;
     }
-    @include e(northCapital-title){
+    @include e(content-title-left){
+      flex: 1;
+    }
+    @include e(content-title-name){
+      font-size: 20px;
+    }
+    @include e(content-title-text){
+      font-size: 12px;
+      color: #c7bebe;
+    }
+    @include e(content-title-switch){
+      display: flex;
+      align-items: center;
+      text {
+        margin-left: 5px;
+      }
+    }
+    @include e(list){
+
+    }
+    @include e(item){
+      display: flex;
+      margin-top: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #dcdddc;
+    }
+    @include e(item-icon){
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+      text-align: center;
+      font-size: 24px;
+      color: #d82f2f;
+      border-radius: 60px;
+      border: 1px solid #d82f2f;
+      margin-right: 10px;
+    }
+    @include e(item-message){
+      flex: 1;
+    }
+    @include e(item-message-header){
       display: flex;
       align-items: flex-end;
     }
-    @include e(northCapital-name){
-      font-size: 24px;
-      font-weight: bold;
+    @include e(item-message-header-name){
+      font-size: 18px;
+      margin-right: 15px;
     }
-    @include e(northCapital-time){
+    @include e(item-message-header-code){
       font-size: 14px;
-      flex: 1;
-      text-align: right;
+      color: #c7bebe;
     }
-    @include e(northCapital-message){
-      font-size: 16px;
-      margin-top: 20px;
+    @include e(item-message-comment){
+      margin-top: 5px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
     }
-    @include e(northCapital-canvas){
-      width: 100%;
-      height: 300px;
+    @include e(item-message-comment){
+      margin-top: 5px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .van-progress {
+        width: 100px;
+      }
+    }
+    @include e(item-message-comment-people){
+      margin-right: 20px;
+    }
+    @include e(item-message-comment-percent){
+      color: #d82f2f;
+    }
+    @include e(item-message-button){
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+      .van-button{
+        height: 36px;
+      }
+    }
+    @include e(item-message-button-want){
+      width: 100px;
+      height: 36px;
+      margin-right: 20px;
+    }
+    @include e(item-message-button-buyed){
+      width: 100px;
+      height: 36px;
     }
   }
 </style>
