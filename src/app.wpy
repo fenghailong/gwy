@@ -44,6 +44,7 @@ wepy.app({
 {
     pages: [
       'pages/index',
+      'pages/detail',
       'pages/rank/rank',
       'pages/rank/northBoundHold',
       'pages/rank/northBoundAdd',

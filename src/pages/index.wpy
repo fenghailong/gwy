@@ -32,7 +32,7 @@
         <van-tab title="新材料"></van-tab>
       </van-tabs>
       <div class="hp-mall-index-list">
-        <div class="hp-mall-index-item">
+        <div class="hp-mall-index-item" @click="toDetail">
           <div class="hp-mall-index-item-icon">君</div>
           <div class="hp-mall-index-item-message">
             <div class="hp-mall-index-item-message-header">
@@ -119,6 +119,11 @@
           name: 'get_stock_df',
         })
         this.board = JSON.parse(data.result).data
+      },
+      toDetail() {
+        wx.navigateTo({
+          url: `/pages/detail`
+        })
       }
     },
   });
@@ -278,10 +283,12 @@
       width: 100px;
       height: 36px;
       margin-right: 20px;
+      border-radius: 10px;
     }
     @include e(item-message-button-buyed){
       width: 100px;
       height: 36px;
+      border-radius: 10px;
     }
   }
 </style>

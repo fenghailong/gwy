@@ -13,8 +13,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/rank/northBoundAdd",
-          "pathName": "pages/rank/northBoundAdd",
+          "name": "pages/detail",
+          "pathName": "pages/detail",
           "query": "",
           "scene": null
         },
