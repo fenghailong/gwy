@@ -60,7 +60,7 @@
             <div class="hp-mall-index-item-message-comment">
               <div class="hp-mall-index-item-message-comment-people">250人买过</div>
               <div class="hp-mall-index-item-message-comment-percent">65% 赚钱</div>
-              <van-progress :show-pivot='false' color="#ee0a24" percentage="65" />
+              <van-progress show-pivot='{{false}}' color="#ee0a24" percentage="65" />
             </div>
             <div class="hp-mall-index-item-message-button">
               <van-button class="hp-mall-index-item-message-button-want" plain hairline type="default" block>想买</van-button>
