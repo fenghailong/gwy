@@ -1,0 +1,132 @@
+<template>
+  <div class="hp-mall-my">
+    <div class="hp-mall-my-header">
+      <div class="hp-mall-my-header-message">
+        <div class="hp-mall-my-header-name">亲爱的用户</div>
+        <div class="hp-mall-my-header-welcome">欢迎来到公务圈</div>
+      </div>
+      <div class="hp-mall-my-header-avatar">
+        <image src="../../assets/images/no-avatar.png" mode="scaleToFill"
+          lazy-load="false">
+        </image>
+      </div>
+    </div>
+    <div class="hp-mall-my-aboutme">
+      <van-icon name="chat-o" />
+      <div class="hp-mall-my-aboutme-name">
+        关于我们
+      </div>
+      <van-icon name="arrow" />
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../../common/eventHub';
+  import loginMixin from '../../utils/common/login'
+  // import requestMixin from '../utils/request'
+  import api from '../../utils/api'
+  // import testMixin from '../mixins/test'
+
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+
+    hooks: {
+
+    },
+    mixins: [loginMixin],
+
+    data: {
+    },
+
+    computed: {
+
+    },
+    async onLoad() {
+
+    },
+
+    onShareAppMessage () {
+
+    },
+
+    methods: {
+
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '我的',
+    usingComponents: {
+      "van-button": "../../components/vant/button/index",
+      "van-search": "../../components/vant/search/index",
+      "van-image": "../../components/vant/image/index",
+      "van-tag": "../../components/vant/tag/index",
+      "van-icon": "../../components/vant/icon/index",
+      "van-popup": "../../components/vant/popup/index",
+      "van-loading": "../../components/vant/loading/index",
+    }
+}
+</config>
+
+<style lang="scss">
+@import "../../scss/output.scss";
+  page{
+    background-color: #fafafa;
+  }
+  @include b(my){
+    background-color: #fafafa;
+    padding: 0 20px;
+    @include e(header){
+      display: flex;
+      align-items: center;
+      padding: 30px 0 20px;
+    }
+    @include e(header-message){
+      flex: 1;
+    }
+    @include e(header-name){
+      font-size: 20px;
+    }
+    @include e(header-welcome){
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    @include e(header-avatar){
+      width: 80px;
+      height: 80px;
+      image{
+        width: 100%;
+        height: 100%;
+      }
+    }
+    @include e(aboutme){
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+      padding: 20px 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    @include e(aboutme-name){
+      flex: 1;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

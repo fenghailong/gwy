@@ -29,7 +29,7 @@ wepy.app({
         //   env 参数决定接下来小程序发起的云开发调用（wx.cloud.xxx）会默认请求到哪个云环境的资源
         //   此处请填入环境 ID, 环境 ID 可打开云控制台查看
         //   如不填则使用默认环境（第一个创建的环境）
-        env: 'dev-3gzwz4c8bf941793',
+        env: 'gwy-dev-6gw266n29e7f0ce7',
         traceUser: true,
       })
     }
@@ -39,16 +39,31 @@ wepy.app({
       // 'pages/index',
   }
 });
+    // "tabBar": {
+    //   "list": [{
+    //     "pagePath": "pages/index",
+    //     "iconPath": "static/index.png",
+    //     "selectedIconPath": "static/index-active.png",
+    //     "text": "首页"
+    //   },{
+    //     "pagePath": "pages/rank/rank",
+    //     "iconPath": "static/index.png",
+    //     "selectedIconPath": "static/index-active.png",
+    //     "text": "榜单"
+    //   },{
+    //     "pagePath": "pages/my",
+    //     "iconPath": "static/resource.png",
+    //     "selectedIconPath": "static/resource-active.png",
+    //     "text": "我的"
+    //   }]
+    // },
 </script>
 <config>
 {
     pages: [
       'pages/index',
-      'pages/detail',
-      'pages/commentDetail',
-      'pages/rank/rank',
-      'pages/rank/northBoundHold',
-      'pages/rank/northBoundAdd',
+      'pages/knowledge/knowledge',
+      'pages/my/my'
     ],
     "tabBar": {
       "list": [{
@@ -57,7 +72,12 @@ wepy.app({
         "selectedIconPath": "static/index-active.png",
         "text": "首页"
       },{
-        "pagePath": "pages/rank/rank",
+        "pagePath": "pages/knowledge/knowledge",
+        "iconPath": "static/index.png",
+        "selectedIconPath": "static/index-active.png",
+        "text": "备考"
+      },{
+        "pagePath": "pages/my/my",
         "iconPath": "static/resource.png",
         "selectedIconPath": "static/resource-active.png",
         "text": "我的"

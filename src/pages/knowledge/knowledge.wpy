@@ -24,20 +24,6 @@
           <div class="hp-mall-rank-stock-item-text">大宗交易活跃A股</div>
           <div class="hp-mall-rank-stock-item-arrow">></div>
         </div>
-        <div class="hp-mall-rank-stock-item" @click="toDetail">
-          <div class="hp-mall-rank-stock-item-icon">
-            <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
-          </div>
-          <div class="hp-mall-rank-stock-item-text">龙虎榜-个股上榜统计</div>
-          <div class="hp-mall-rank-stock-item-arrow">></div>
-        </div>
-        <div class="hp-mall-rank-stock-item" @click="toDetail">
-          <div class="hp-mall-rank-stock-item-icon">
-            <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
-          </div>
-          <div class="hp-mall-rank-stock-item-text">龙虎榜-营业上榜统计</div>
-          <div class="hp-mall-rank-stock-item-arrow">></div>
-        </div>
       </div>
     </div>
   </div>
@@ -47,7 +33,6 @@
   import wepy from '@wepy/core'
   import eventHub from '../../common/eventHub';
   import api from '../../utils/api'
-  // import testMixin from '../mixins/test'
 
   wepy.page({
     config: {
@@ -91,7 +76,7 @@
 </script>
 <config>
 {
-    navigationBarTitleText: '榜单',
+    navigationBarTitleText: '备考',
     usingComponents: {
       "van-button": "../../components/vant/button/index",
       "van-search": "../../components/vant/search/index",

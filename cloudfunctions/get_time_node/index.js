@@ -4,15 +4,12 @@ const rp = require('request-promise');
 
 cloud.init()
 
+const db = cloud.database()
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const get_options = {
-    method: 'GET',
-    url: 'http://47.99.214.1:8080/get_money_stock',
-  };
-  //获取get请求数据
-
-  const get_res= await rp(get_options );
-
-  return get_res
+  try{
+    return await db.collection('timeNode').get()
+  }catch(e){
+    console.log(e)
+  }
 }

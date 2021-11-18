@@ -20,7 +20,7 @@
     "compileHotReLoad": false,
     "useMultiFrameRuntime": true,
     "useApiHook": true,
-    "useApiHostProcess": false,
+    "useApiHostProcess": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -37,8 +37,8 @@
     "minifyWXSS": true
   },
   "compileType": "miniprogram",
-  "appid": "wx3704a35a63da4954",
-  "projectname": "movie",
+  "appid": "wxb41b8b63bdda4f13",
+  "projectname": "gwy",
   "miniprogramRoot": "weapp/",
   "cloudfunctionRoot": "cloudfunctions/",
   "simulatorType": "wechat",

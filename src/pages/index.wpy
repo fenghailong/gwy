@@ -1,72 +1,97 @@
 <template>
   <div class="hp-mall-index">
-    <div>
-      <van-search value="{{ value }}"   shape="round"  placeholder="搜索股票" />
+    <div class="hp-mall-index-header-bg">
+      <image src="../assets/images/header-bg.png" mode="scaleToFill" lazy-load="false"></image>
     </div>
-    <div class="hp-mall-index-header" v-if="board.length > 0">
-      <div v-for="board" class="hp-mall-index-header-item {{item.percent_change < 0 ? 'is-down' :'is-up'}}">
-        <div class="hp-mall-index-header-item-text">{{item.name}}</div>
-        <div class="hp-mall-index-header-item-count {{item.percent_change < 0 ? 'is-down' :'is-up'}}">{{item.current_price}}</div>
-        <div class="hp-mall-index-header-item-change {{item.percent_change < 0 ? 'is-down' :'is-up'}}">{{item.percent_change}}%</div>
-      </div>
-    </div>
-    <div class="hp-mall-index-content">
-      <div class="hp-mall-index-content-title">
-        <div class="hp-mall-index-content-title-left">
-          <div class="hp-mall-index-content-title-name">大家说</div>
-          <div class="hp-mall-index-content-title-text">股票基金好不好？看看买过的人怎么说</div>
-        </div>
-        <div class="hp-mall-index-content-title-switch">
-          <van-icon name="chart-trending-o" />
-          <text>看基金</text>
-        </div>
-      </div>
-      <van-tabs active="{{ active }}" bind:change="onChange">
-        <van-tab title="全部"></van-tab>
-        <van-tab title="有色"></van-tab>
-        <van-tab title="石油"></van-tab>
-        <van-tab title="钢铁"></van-tab>
-        <van-tab title="种植业"></van-tab>
-        <van-tab title="采掘"></van-tab>
-        <van-tab title="基础化学"></van-tab>
-        <van-tab title="新材料"></van-tab>
-      </van-tabs>
-      <div class="hp-mall-index-list">
-        <div class="hp-mall-index-item" @click="toDetail">
-          <div class="hp-mall-index-item-icon">君</div>
-          <div class="hp-mall-index-item-message">
-            <div class="hp-mall-index-item-message-header">
-              <div class="hp-mall-index-item-message-header-name">君正集团</div>
-              <div class="hp-mall-index-item-message-header-code">600342</div>
+    <div class="hp-mall-index-card-list">
+      <div class="hp-mall-index-card-item" v-for="timeNodeList">
+        <div class="hp-mall-index-card-header">{{item.title}}</div>
+        <div class="hp-mall-index-card-content">
+          <van-icon color="#c1c1d7" name="minus" />
+          <div class="hp-mall-index-card-content-item">
+            <div class="hp-mall-index-card-content-message">
+              <van-button class="hp-mall-index-card-content-message-button" plain size="mini" type="danger">公告发布</van-button>
+              <div class="hp-mall-index-card-content-message-text">{{item.amRelease_timeDec}}</div>
             </div>
-            <div class="hp-mall-index-item-message-comment">
-              <div class="hp-mall-index-item-message-comment-people">250人买过</div>
-              <div class="hp-mall-index-item-message-comment-percent">65% 赚钱</div>
-              <van-progress :show-pivot='false' color="#ee0a24" percentage="65" />
+            <div class="hp-mall-index-card-content-arraw">
+              <div class="hp-mall-index-card-content-arraw-cicle"></div>
+              <div class="hp-mall-index-card-content-arraw-line"></div>
             </div>
-            <div class="hp-mall-index-item-message-button">
-              <van-button class="hp-mall-index-item-message-button-want" plain hairline type="default" block>想买</van-button>
-              <van-button class="hp-mall-index-item-message-button-buyed" plain hairline type="default" block>买过</van-button>
-            </div>
+            <van-icon size="22" name="volume-o"  color="#ff6666"/>
           </div>
-        </div>
-        <div class="hp-mall-index-item">
-          <div class="hp-mall-index-item-icon">陕</div>
-          <div class="hp-mall-index-item-message">
-            <div class="hp-mall-index-item-message-header">
-              <div class="hp-mall-index-item-message-header-name">陕西黑猫</div>
-              <div class="hp-mall-index-item-message-header-code">600342</div>
+          <van-icon color="#c1c1d7" name="minus" />
+          <div class="hp-mall-index-card-content-item hp-mall-index-card-content-item-down">
+            <div class="hp-mall-index-card-content-arraw hp-mall-index-card-content-arraw-down">
+              <div class="hp-mall-index-card-content-arraw-line"></div>
+              <div class="hp-mall-index-card-content-arraw-cicle"></div>
             </div>
-            <div class="hp-mall-index-item-message-comment">
-              <div class="hp-mall-index-item-message-comment-people">250人买过</div>
-              <div class="hp-mall-index-item-message-comment-percent">65% 赚钱</div>
-              <van-progress show-pivot='{{false}}' color="#ee0a24" percentage="65" />
+            <div class="hp-mall-index-card-content-message hp-mall-index-card-content-message-down">
+              <van-button class="hp-mall-index-card-content-message-button" plain size="mini" type="danger">报名时间</van-button>
+              <div class="hp-mall-index-card-content-message-text">{{item.signUp_timeDec}}</div>
             </div>
-            <div class="hp-mall-index-item-message-button">
-              <van-button class="hp-mall-index-item-message-button-want" plain hairline type="default" block>想买</van-button>
-              <van-button class="hp-mall-index-item-message-button-buyed" plain hairline type="default" block>买过</van-button>
-            </div>
+            <van-icon size="22" name="tosend"  color="#ff6666"/>
           </div>
+          <van-icon color="#c1c1d7" name="minus" />
+          <div class="hp-mall-index-card-content-item">
+            <div class="hp-mall-index-card-content-message">
+              <van-button class="hp-mall-index-card-content-message-button" plain size="mini" type="danger">确认缴费</van-button>
+              <div class="hp-mall-index-card-content-message-text">{{item.confirmPay_timeDec}}</div>
+            </div>
+            <div class="hp-mall-index-card-content-arraw">
+              <div class="hp-mall-index-card-content-arraw-cicle"></div>
+              <div class="hp-mall-index-card-content-arraw-line"></div>
+            </div>
+            <van-icon size="22" name="gold-coin-o" color="#ff6666"/>
+          </div>
+          <van-icon color="#c1c1d7" name="minus" />
+          <div class="hp-mall-index-card-content-item hp-mall-index-card-content-item-down">
+            <div class="hp-mall-index-card-content-arraw hp-mall-index-card-content-arraw-down">
+              <div class="hp-mall-index-card-content-arraw-line"></div>
+              <div class="hp-mall-index-card-content-arraw-cicle"></div>
+            </div>
+            <div class="hp-mall-index-card-content-message hp-mall-index-card-content-message-down">
+              <van-button class="hp-mall-index-card-content-message-button" plain size="mini" type="danger">准考证</van-button>
+              <div class="hp-mall-index-card-content-message-text">{{item.admissionPrint_timeDec}}</div>
+            </div>
+            <van-icon size="22" name="credit-pay" color="#ff6666"/>
+          </div>
+          <van-icon color="#c1c1d7" name="minus" />
+          <div class="hp-mall-index-card-content-item">
+            <div class="hp-mall-index-card-content-message">
+              <van-button class="hp-mall-index-card-content-message-button" plain size="mini" type="danger">笔试时间</van-button>
+              <div class="hp-mall-index-card-content-message-text">{{item.testWrite_timeDec}}</div>
+            </div>
+            <div class="hp-mall-index-card-content-arraw">
+              <div class="hp-mall-index-card-content-arraw-cicle"></div>
+              <div class="hp-mall-index-card-content-arraw-line"></div>
+            </div>
+            <van-icon size="22" name="edit" color="#ff6666"/>
+          </div>
+          <van-icon color="#c1c1d7" name="minus" />
+          <div class="hp-mall-index-card-content-item hp-mall-index-card-content-item-down">
+            <div class="hp-mall-index-card-content-arraw hp-mall-index-card-content-arraw-down">
+              <div class="hp-mall-index-card-content-arraw-line"></div>
+              <div class="hp-mall-index-card-content-arraw-cicle"></div>
+            </div>
+            <div class="hp-mall-index-card-content-message hp-mall-index-card-content-message-down">
+              <van-button class="hp-mall-index-card-content-message-button" plain size="mini" type="danger">笔试查询</van-button>
+              <div class="hp-mall-index-card-content-message-text">{{item.gradeInquiry_timeDec}}</div>
+            </div>
+            <van-icon size="22" name="search" color="#ff6666"/>
+          </div>
+          <van-icon color="#c1c1d7" name="minus" />
+          <div class="hp-mall-index-card-content-item">
+            <div class="hp-mall-index-card-content-message">
+              <van-button class="hp-mall-index-card-content-message-button" plain size="mini" type="danger">面试时间</van-button>
+              <div class="hp-mall-index-card-content-message-text">{{item.interview_timeDec}}</div>
+            </div>
+            <div class="hp-mall-index-card-content-arraw">
+              <div class="hp-mall-index-card-content-arraw-cicle"></div>
+              <div class="hp-mall-index-card-content-arraw-line"></div>
+            </div>
+            <van-icon size="22" name="contact" color="#ff6666"/>
+          </div>
+          <van-icon color="#c1c1d7" name="minus"/>
         </div>
       </div>
     </div>
@@ -91,9 +116,7 @@
     mixins: [common, request],
 
     data: {
-      active: 0,
-      board: [],
-      nouth_money: {},
+      timeNodeList: []
     },
 
     computed: {
@@ -101,28 +124,41 @@
     },
     async onLoad(e) {
       wx.showLoading({title: '加载中'})
-      await this.getStockDf()
+      await this.getSwitch()
       wx.hideLoading()
     },
 
     onShareAppMessage () {
       return {
-        title: '选股助手-你的选股好帮手',
+        title: '公务圈-你的备考好帮手',
         path: '/pages/index'
       }
     },
 
     methods: {
-      //获取大盘数据
-      async getStockDf() {
-        let data =await wx.cloud.callFunction({
-          name: 'get_stock_df',
-        })
-        this.board = JSON.parse(data.result).data
+      async getSwitch() {
+        const db = wx.cloud.database()
+        await db.collection('timeNode')
+          .get()
+          .then(res => {
+            this.timeNodeList = res.data
+          })
       },
       toDetail() {
         wx.navigateTo({
           url: `/pages/detail`
+        })
+      },
+      toDetailabc() {
+        wx.showToast({
+          title: '开发中敬请期待',
+          duration: 1000
+        })
+      },
+      toShortTheme() {
+        console.log(1)
+        wx.navigateTo({
+          url: `/pages/shortTheme/shortTheme`
         })
       }
     },
@@ -130,7 +166,7 @@
 </script>
 <config>
 {
-    navigationBarTitleText: '选股助手',
+    navigationBarTitleText: '公考助手',
     usingComponents: {
       "van-button": "../components/vant/button/index",
       "van-search": "../components/vant/search/index",
@@ -147,148 +183,100 @@
 
 <style lang="scss">
 @import "../scss/output.scss";
+  page{
+    background: #e84942;
+    height: 100%;
+  }
   @include b(index){
     padding: 0 0 0;
-    @include e(header){
-      display: flex;
-      padding: 0 20px;
-      margin-top: 20px;
-      overflow-x: auto;
+    @include e(header-bg){
+      position: absolute;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      image {
+        width: 100%;
+        height: 100%;
+      }
     }
-    @include e(header-item){
-      background: linear-gradient(to bottom, #e9a9a9, #ffffff);
-      flex: 0 0 100px;
-      text-align: center;
+    @include e(card-list){
+      padding: 200px 20px 20px;
+    }
+    @include e(card-item){
+      padding: 20px 20px;
+      background: #fff;
       border-radius: 10px;
-      padding: 15px 0;
-      margin-right: 20px;
-      @include when(down){
-        background: linear-gradient(to bottom, #bdddc3, #ffffff);
-      }
-      @include when(up){
-        background: linear-gradient(to bottom, #e9a9a9, #ffffff);
-      }
+      margin-bottom: 20px;
     }
-    @include e(header-item-text){
-      font-weight: 500;
-      font-size: 12px;
-    }
-    @include e(header-item-count){
-      color: #15991b;
-      font-weight: bold;
-      font-size: 18px;
-      @include when(up){
-        color: #d82f2f;
-      }
-    }
-    @include e(header-item-change){
-      color: #15991b;
-      font-weight: 500;
-      font-size: 12px;
-      @include when(up){
-        color: #d82f2f;
-      }
-    }
-    @include e(content){
-      padding: 0 20px;
-    }
-    @include e(content-title){
-      display: flex;
-      align-items: center;
-      margin-top: 20px;
-    }
-    @include e(content-title-left){
-      flex: 1;
-    }
-    @include e(content-title-name){
-      font-size: 20px;
-    }
-    @include e(content-title-text){
-      font-size: 12px;
-      color: #c7bebe;
-    }
-    @include e(content-title-switch){
-      display: flex;
-      align-items: center;
-      text {
-        margin-left: 5px;
-      }
-    }
-    @include e(list){
-
-    }
-    @include e(item){
-      display: flex;
-      margin-top: 20px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #dcdddc;
-    }
-    @include e(item-icon){
-      width: 60px;
-      height: 60px;
-      line-height: 60px;
+    @include e(card-header){
       text-align: center;
+      margin-bottom: 20px;
       font-size: 24px;
-      color: #d82f2f;
-      border-radius: 60px;
-      border: 1px solid #d82f2f;
-      margin-right: 10px;
+      font-weight: bold;
+      color: #ff1a1a;
     }
-    @include e(item-message){
-      flex: 1;
-    }
-    @include e(item-message-header){
+    @include e(card-content){
       display: flex;
-      align-items: flex-end;
-    }
-    @include e(item-message-header-name){
-      font-size: 18px;
-      margin-right: 15px;
-    }
-    @include e(item-message-header-code){
-      font-size: 14px;
-      color: #c7bebe;
-    }
-    @include e(item-message-comment){
-      margin-top: 5px;
-      font-size: 12px;
-      display: flex;
+      justify-content: space-around;
       align-items: center;
+      padding: 80px 0 60px;
     }
-    @include e(item-message-comment){
-      margin-top: 5px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      .van-progress {
-        width: 100px;
+    @include e(card-content-item){
+      position: relative;
+      width: 30px;
+      line-height: 1;
+      text-align: center;
+      @include e(card-content-message){
+        position: absolute;
+        width: 120px;
+        left:50%;
+        margin-left: -60px;
+        top: -70px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        @include e(card-content-message-button){
+          .van-button {
+            border-radius: 5px;
+          }
+        }
+        @include e(card-content-message-text){
+          font-size: 10px;
+          margin-top: 5px;
+          color: #8c8c8c;
+          width: 70px;
+        }
+      }
+      @include e(card-content-arraw){
+        position: absolute;
+        width: 6px;
+        left:50%;
+        margin-left: -3px;
+        top: -18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        @include e(card-content-arraw-line){
+          height: 10px;
+          width: 1px;
+          background-color: #c1c1d7;
+        }
+        @include e(card-content-arraw-cicle){
+          width: 5px;
+          height: 5px;
+          border-radius: 100%;
+          background-color: #c1c1d7;
+        }
       }
     }
-    @include e(item-message-comment-people){
-      margin-right: 20px;
-    }
-    @include e(item-message-comment-percent){
-      color: #d82f2f;
-    }
-    @include e(item-message-button){
-      display: flex;
-      align-items: center;
-      margin-top: 15px;
-      .van-button{
-        height: 36px;
+    @include e(card-content-item-down){
+      @include e(card-content-message-down){
+        top: 45px !important;
       }
-    }
-    @include e(item-message-button-want){
-      width: 100px;
-      height: 36px;
-      margin-right: 20px;
-      border-radius: 10px;
-    }
-    @include e(item-message-button-buyed){
-      width: 100px;
-      height: 36px;
-      border-radius: 10px;
+      @include e(card-content-arraw-down){
+        top: 25px !important;
+      }
     }
   }
 </style>

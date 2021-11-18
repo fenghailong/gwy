@@ -1,5 +1,5 @@
 {
-  "name": "get_money_current",
+  "name": "get_time_node",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "request-promise": "^4.2.6",
-    "wx-server-sdk": "~2.3.3"
+    "wx-server-sdk": "~2.5.3"
   }
 }
