@@ -63,6 +63,7 @@ wepy.app({
     pages: [
       'pages/index',
       'pages/knowledge/knowledge',
+      'pages/knowledge/knowledgeChild',
       'pages/my/my'
     ],
     "tabBar": {
