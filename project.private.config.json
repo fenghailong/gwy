@@ -13,8 +13,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/commentDetail",
-          "pathName": "pages/commentDetail",
+          "name": "pages/knowledge",
+          "pathName": "pages/knowledge/knowledge",
           "query": "",
           "scene": null
         },
