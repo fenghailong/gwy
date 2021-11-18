@@ -9,7 +9,7 @@
         <div class="hp-mall-knowledge-content-item" @click="toDetail">
           <div class="hp-mall-knowledge-content-item-text">
             <div class="hp-mall-knowledge-content-item-text-mes">言语理解</div>
-            <div class="hp-mall-knowledge-content-item-text-num">共有知识点36</div>
+            <div class="hp-mall-knowledge-content-item-text-num">知识点共36个</div>
           </div>
           <div class="hp-mall-knowledge-content-item-icon">
             <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
@@ -155,6 +155,7 @@
       @include e(content-item-text-num){
         font-size: 14px;
         color: #9e9e9e;
+        margin-top: 5px;
       }
     }
   }
