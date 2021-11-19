@@ -10,23 +10,10 @@
           <van-collapse-item v-for="knowledgeTypeList" class="hp-mall-knowledgeChild-content-item" name="1">
             <div class="hp-mall-knowledgeChild-content-item-title" slot="title">{{item.name}}（{{item.totalPoint}}）</div>
             <div class="hp-mall-knowledgeChild-content-item-box">
-              <div class="hp-mall-knowledgeChild-content-item-box-item">
+              <div class="hp-mall-knowledgeChild-content-item-box-item" v-for="childItem in item.knowledge">
                 <div class="hp-mall-knowledgeChild-content-item-box-item-left">01</div>
                 <div class="hp-mall-knowledgeChild-content-item-box-item-middle">
-                  <div class="hp-mall-knowledgeChild-content-item-box-item-middle-title">位置类-线性关系</div>
-                  <div class="hp-mall-knowledgeChild-content-item-box-item-middle-message">
-                    <text>8张卡片</text>
-                    <text>1.4万人已学</text>
-                  </div>
-                </div>
-                <div class="hp-mall-knowledgeChild-content-item-box-item-right">
-                  <van-icon name="upgrade" />
-                </div>
-              </div>
-              <div class="hp-mall-knowledgeChild-content-item-box-item">
-                <div class="hp-mall-knowledgeChild-content-item-box-item-left">01</div>
-                <div class="hp-mall-knowledgeChild-content-item-box-item-middle">
-                  <div class="hp-mall-knowledgeChild-content-item-box-item-middle-title">位置类-线性关系</div>
+                  <div class="hp-mall-knowledgeChild-content-item-box-item-middle-title">{{childItem.name}}</div>
                   <div class="hp-mall-knowledgeChild-content-item-box-item-middle-message">
                     <text>8张卡片</text>
                     <text>1.4万人已学</text>
@@ -60,7 +47,7 @@
     mixins: [],
 
     data: {
-      activeName: '1',
+      activeName: '0',
       knowledgeTypeList: [],
       knowledgeList: []
     },
