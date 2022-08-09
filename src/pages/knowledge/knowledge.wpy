@@ -1,0 +1,160 @@
+<template>
+  <div class="hp-mall-knowledge">
+    <div class="hp-mall-knowledge-header-bg">
+      <image src="../../assets/images/know-header.png" mode="scaleToFill" lazy-load="false"></image>
+    </div>
+    <div class="hp-mall-knowledge-content">
+      <div class="hp-mall-knowledge-content-title">2分钟GET一个知识点</div>
+      <div class="hp-mall-knowledge-content-list">
+        <div class="hp-mall-knowledge-content-item" v-for="item in subjectList" @click="toKnowledgeChild(item._id)">
+          <div class="hp-mall-knowledge-content-item-text">
+            <div class="hp-mall-knowledge-content-item-text-mes">{{item.name}}</div>
+            <div class="hp-mall-knowledge-content-item-text-num">知识点共{{item.totalPoint}}个</div>
+          </div>
+          <div class="hp-mall-knowledge-content-item-icon">
+            <image :src="item.icon" mode="scaleToFill" lazy-load="false"></image>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../../common/eventHub';
+  import api from '../../utils/api'
+
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+
+    hooks: {
+
+    },
+    mixins: [],
+
+    data: {
+      subjectList: []
+    },
+
+    async onLoad() {
+      this.getAllType();
+    },
+
+    methods: {
+      async getAllType() {
+        wx.showLoading({title: '加载中'})
+        const db = wx.cloud.database()
+        await db.collection('subject')
+          .get()
+          .then(res => {
+            console.log(res.data)
+            this.subjectList = res.data
+            wx.hideLoading()
+          })
+      },
+      toDetail() {
+        wx.showToast({
+          title: '开发中敬请期待',
+          duration: 1000
+        })
+      },
+      toKnowledgeChild(id) {
+        wx.navigateTo({
+          url: `/pages/knowledge/knowledgeChild?id=${id}`
+        })
+      },
+    },
+
+    onReachBottom() {
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '备考',
+    navigationBarBackgroundColor: '#b2d0f9',
+    usingComponents: {
+      "van-button": "../../components/vant/button/index",
+      "van-search": "../../components/vant/search/index",
+      "van-image": "../../components/vant/image/index",
+      "van-tag": "../../components/vant/tag/index",
+      "van-loading": "../../components/vant/loading/index",
+    }
+}
+</config>
+
+<style lang="scss">
+
+@import "../../scss/output.scss";
+  page{
+    background: #fafafa;
+  }
+  @include b(knowledge){
+    @include e(header-bg){
+      position: absolute;
+      z-index: -1;
+      width: 100%;
+      height: 80px;
+      image{
+        width: 100%;
+        height: 100%;
+        border-radius: 0 0 30px 30px;
+      }
+    }
+    @include e(content){
+      padding: 0 20px;
+    }
+    @include e(content-title){
+      padding: 20px 0 10px 0;
+      color: #fff;
+      font-weight: 400;
+      font-size: 18px;
+    }
+    @include e(content-list){
+      margin-top: 10px;
+    }
+    @include e(content-item){
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: darkgray 2px 2px 5px 2px;
+    }
+    @include e(content-item-icon){
+      width: 50px;
+      height: 50px;
+      image{
+        width: 100%;
+        height: 100%;
+      }
+    }
+    @include e(content-item-text){
+      flex: 1;
+      @include e(content-item-text-mes){
+        font-size: 20px;
+        font-weight: 500;
+      }
+      @include e(content-item-text-num){
+        font-size: 14px;
+        color: #9e9e9e;
+        margin-top: 10px;
+      }
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

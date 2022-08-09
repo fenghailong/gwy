@@ -1,0 +1,229 @@
+<template>
+  <div class="hp-mall-knowledgeChild">
+    <div class="hp-mall-knowledgeChild-header-bg">
+      <image src="../../assets/images/know-header.png" mode="scaleToFill" lazy-load="false"></image>
+    </div>
+    <div class="hp-mall-knowledgeChild-content">
+      <div class="hp-mall-knowledgeChild-content-title">判断推理</div>
+      <div class="hp-mall-knowledgeChild-content-list">
+        <van-collapse accordion value="{{ activeName }}" @change="onChange">
+          <van-collapse-item v-for="knowledgeTypeList" class="hp-mall-knowledgeChild-content-item" name="1">
+            <div class="hp-mall-knowledgeChild-content-item-title" slot="title">{{item.name}}（{{item.totalPoint}}）</div>
+            <div class="hp-mall-knowledgeChild-content-item-box">
+              <div class="hp-mall-knowledgeChild-content-item-box-item" v-for="childItem in item.knowledge">
+                <div class="hp-mall-knowledgeChild-content-item-box-item-left">01</div>
+                <div class="hp-mall-knowledgeChild-content-item-box-item-middle">
+                  <div class="hp-mall-knowledgeChild-content-item-box-item-middle-title">{{childItem.name}}</div>
+                  <div class="hp-mall-knowledgeChild-content-item-box-item-middle-message">
+                    <text>8张卡片</text>
+                    <text>1.4万人已学</text>
+                  </div>
+                </div>
+                <div class="hp-mall-knowledgeChild-content-item-box-item-right">
+                  <van-icon name="upgrade" />
+                </div>
+              </div>
+            </div>
+          </van-collapse-item>
+        </van-collapse>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../../common/eventHub';
+  import api from '../../utils/api'
+
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+
+    hooks: {
+
+    },
+    mixins: [],
+
+    data: {
+      activeName: '0',
+      knowledgeTypeList: [],
+      knowledgeList: []
+    },
+
+    async onLoad(options) {
+      this.getAllType(options.id);
+    },
+
+    methods: {
+      async getAllType(id) {
+        wx.showLoading({title: '加载中'})
+        const db = wx.cloud.database()
+        await db.collection('knowledgeType')
+          .where({
+            subjectId: id
+          })
+          .get()
+          .then(res => {
+            console.log(res.data)
+            this.knowledgeTypeList = res.data
+            wx.hideLoading()
+          })
+      },
+      async getAllKnowledge(id) {
+        wx.showLoading({title: '加载中'})
+        const db = wx.cloud.database()
+        await db.collection('knowledge')
+          .where({
+            knowledgeType: id
+          })
+          .get()
+          .then(res => {
+            console.log(res.data)
+            this.knowledgeList = res.data
+            wx.hideLoading()
+          })
+      },
+      onChange(event) {
+        this.activeName = event.$wx.detail
+      },
+      toDetail() {
+        wx.showToast({
+          title: '开发中敬请期待',
+          duration: 1000
+        })
+      },
+      toNorthBoundAdd() {
+        wx.navigateTo({
+          url: `/pages/rank/northBoundAdd`
+        })
+      },
+    },
+
+    onReachBottom() {
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '知识点',
+    navigationBarBackgroundColor: '#b2d0f9',
+    usingComponents: {
+      "van-button": "../../components/vant/button/index",
+      "van-search": "../../components/vant/search/index",
+      "van-image": "../../components/vant/image/index",
+      "van-tag": "../../components/vant/tag/index",
+      "van-loading": "../../components/vant/loading/index",
+      "van-collapse": "../../components/vant/collapse/index",
+      "van-collapse-item": "../../components/vant/collapse-item/index",
+      "van-icon": "../../components/vant/icon/index",
+    }
+}
+</config>
+
+<style lang="scss">
+
+@import "../../scss/output.scss";
+  page{
+    background: #fafafa;
+  }
+  @include b(knowledgeChild){
+    @include e(header-bg){
+      position: absolute;
+      z-index: -1;
+      width: 100%;
+      height: 80px;
+      image{
+        width: 100%;
+        height: 100%;
+        border-radius: 0 0 30px 30px;
+      }
+    }
+    @include e(content){
+      padding: 0 20px;
+    }
+    @include e(content-title){
+      padding: 20px 0 10px 0;
+      color: #fff;
+      font-weight: 400;
+      font-size: 18px;
+    }
+    @include e(content-list){
+      margin-top: 10px;
+    }
+    @include e(content-item){
+      display: flex;
+      align-items: center;
+      border-radius: 8px;
+      background-color: #fff;
+      margin-bottom: 20px;
+      box-shadow: darkgray 2px 2px 5px 2px;
+      overflow: hidden;
+      .van-collapse-item {
+        width: 100%;
+      }
+      .van-collapse-item__content{
+        padding: 0 15px;
+      }
+    }
+    @include e(content-item-title){
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+    }
+    @include e(content-item-box){
+    }
+    @include e(content-item-box-item){
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #e9e9e9;
+      @include pseudo(last-child) {
+        border-bottom: 0;
+      }
+      @include e(content-item-box-item-left){
+        color: #b2d0f9;
+        margin-right: 20px;
+        font-size: 16px;
+        align-self: flex-start;
+      }
+      @include e(content-item-box-item-middle){
+        flex: 1
+      }
+      @include e(content-item-box-item-middle-title){
+        font-size: 14px;
+        font-weight: 400;
+        color: #000;
+        line-height: 1;
+      }
+      @include e(content-item-box-item-middle-message){
+        display: flex;
+        font-size: 12px;
+        color: #9e9e9e;
+        margin-top: 10px;
+        line-height: 1;
+        text{
+          margin-right: 20px;
+        }
+      }
+      @include e(content-item-box-item-right){
+        font-size: 20px;
+        font-weight: 400;
+        color: #000;
+        transform:rotate(90deg);
+      }
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

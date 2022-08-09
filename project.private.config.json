@@ -13,14 +13,23 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/commentDetail",
-          "pathName": "pages/commentDetail",
+          "name": "pages/knowledgeChild",
+          "pathName": "pages/knowledge/knowledgeChild",
           "query": "",
           "scene": null
         },
         {
           "name": "pages/my",
           "pathName": "pages/my",
+<<<<<<< HEAD
+=======
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/knowledge",
+          "pathName": "pages/knowledge/knowledge",
+>>>>>>> 535ca71ab318995e5909c20b7ee88606a7a047d4
           "query": "",
           "scene": null
         }
