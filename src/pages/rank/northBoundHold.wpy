@@ -44,21 +44,36 @@
     },
 
     async onLoad() {
-      this.getStockEmHoldStockDf()
+      await this.getStockEmHoldStockDf()
     },
 
     methods: {
       //获取北向资金持股
       async getStockEmHoldStockDf() {
-        wx.showLoading({title: '数据较大请耐心等待...'})
-        let data =await wx.cloud.callFunction({
-          name: 'get_stock_em_hold_stock_df',
-          data: {
-            type: 'hold',
+        wx.showLoading({title: '加载中...'})
+        const db = wx.cloud.database()
+
+        const countResult = await db.collection('nh_hold_stock').count()
+        const total = countResult.total
+        const MAX_LIMIT = 20
+        // 计算需分几次取
+        const batchTimes = Math.ceil(total / 20)
+        // 承载所有读操作的 promise 的数组
+        const tasks = []
+        for (let i = 0; i < batchTimes; i++) {
+          const promise = db.collection('nh_hold_stock').skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+          tasks.push(promise)
+        }
+        // 等待所有
+        let data = (await Promise.all(tasks)).reduce((acc, cur) => {
+          return {
+            data: acc.data.concat(cur.data),
+            errMsg: acc.errMsg,
           }
         })
-        this.stockList = JSON.parse(data.result).data.result
-        this.current_time = JSON.parse(data.result).data.current_time
+        console.log(data)
+        this.stockList = data.data
+        this.current_time = data.data[0].update
         wx.hideLoading()
       },
     },

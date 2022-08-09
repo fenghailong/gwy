@@ -19,9 +19,8 @@
           "scene": null
         },
         {
-          "id": -1,
-          "name": "pages/resourcesearch",
-          "pathName": "pages/resourcesearch",
+          "name": "pages/my",
+          "pathName": "pages/my",
           "query": "",
           "scene": null
         }

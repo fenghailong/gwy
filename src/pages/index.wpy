@@ -3,14 +3,38 @@
     <div>
       <van-search value="{{ value }}"   shape="round"  placeholder="搜索股票" />
     </div>
-    <div class="hp-mall-index-header" v-if="board.length > 0">
+    <div class="hp-mall-index-header" v-if="isBoardSwitch && board.length > 0">
       <div v-for="board" class="hp-mall-index-header-item {{item.percent_change < 0 ? 'is-down' :'is-up'}}">
         <div class="hp-mall-index-header-item-text">{{item.name}}</div>
         <div class="hp-mall-index-header-item-count {{item.percent_change < 0 ? 'is-down' :'is-up'}}">{{item.current_price}}</div>
         <div class="hp-mall-index-header-item-change {{item.percent_change < 0 ? 'is-down' :'is-up'}}">{{item.percent_change}}%</div>
       </div>
     </div>
-    <div class="hp-mall-index-content">
+    <div class="hp-mall-index-box">
+      <div class="hp-mall-index-box-item" @click="toShortTheme">
+        <div class="hp-mall-index-box-item-name">短线题材</div>
+        <van-icon name="arrow" />
+      </div>
+      <div class="hp-mall-index-box-item" @click="toDetailabc">
+        <div class="hp-mall-index-box-item-name">价值洼地</div>
+        <van-icon name="arrow" />
+      </div>
+    </div>
+    <!-- <div class="hp-mall-index-northCapital" v-if="board.length > 0">
+      <div class="hp-mall-index-northCapital-title">
+        <div class="hp-mall-index-northCapital-name">大盘成交</div>
+        <div class="hp-mall-index-northCapital-time">数据日期：{{nhCurrentMoney.update_time}}</div>
+      </div>
+      <div class="hp-mall-index-northCapital-message">当日大盘成交金额{{board[0].turnover + board[1].turnover + board[2].turnover  }}亿,上证成交金额{{board[0].turnover}}亿，深证成交量{{board[1].turnover}}亿，创业板成交量{{board[2].turnover}}亿。</div>
+    </div> -->
+    <div class="hp-mall-index-northCapital" v-if="nhCurrentMoney.totalmoney">
+      <div class="hp-mall-index-northCapital-title">
+        <div class="hp-mall-index-northCapital-name">北向资金</div>
+        <div class="hp-mall-index-northCapital-time">数据日期：{{nhCurrentMoney.update_time}}</div>
+      </div>
+      <div class="hp-mall-index-northCapital-message">当日北向资金总流入{{nhCurrentMoney.totalmoney}}亿，沪股通流入{{nhCurrentMoney.sh_money}}亿，深股通流入{{nhCurrentMoney.sz_money}}亿。</div>
+    </div>
+    <!-- <div class="hp-mall-index-content">
       <div class="hp-mall-index-content-title">
         <div class="hp-mall-index-content-title-left">
           <div class="hp-mall-index-content-title-name">大家说</div>
@@ -69,7 +93,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -93,7 +117,8 @@
     data: {
       active: 0,
       board: [],
-      nouth_money: {},
+      nhCurrentMoney: {},
+      isBoardSwitch: false,
     },
 
     computed: {
@@ -101,7 +126,9 @@
     },
     async onLoad(e) {
       wx.showLoading({title: '加载中'})
-      await this.getStockDf()
+      await this.getSwitch()
+      await this.getStockDfCurrent()
+      await this.getNhCurrentMoney()
       wx.hideLoading()
     },
 
@@ -113,16 +140,49 @@
     },
 
     methods: {
+      async getSwitch() {
+        const db = wx.cloud.database()
+        await db.collection('switch')
+          .get()
+          .then(res => {
+            this.isBoardSwitch = res.data[0].isBoardSwitch
+          })
+      },
+
       //获取大盘数据
-      async getStockDf() {
-        let data =await wx.cloud.callFunction({
-          name: 'get_stock_df',
-        })
-        this.board = JSON.parse(data.result).data
+      async getStockDfCurrent() {
+        const db = wx.cloud.database()
+        await db.collection('stock_df_current')
+          .get()
+          .then(res => {
+            this.board = res.data
+          })
+      },
+      //获取北向资金数据
+      async getNhCurrentMoney() {
+        const db = wx.cloud.database()
+        await db.collection('get_nh_current_money')
+          .get()
+          .then(res => {
+            this.nhCurrentMoney = res.data[0]
+          })
+        console.log(this.nhCurrentMoney)
       },
       toDetail() {
         wx.navigateTo({
           url: `/pages/detail`
+        })
+      },
+      toDetailabc() {
+        wx.showToast({
+          title: '开发中敬请期待',
+          duration: 1000
+        })
+      },
+      toShortTheme() {
+        console.log(1)
+        wx.navigateTo({
+          url: `/pages/shortTheme/shortTheme`
         })
       }
     },
@@ -151,17 +211,17 @@
     padding: 0 0 0;
     @include e(header){
       display: flex;
+      justify-content: space-between;
       padding: 0 20px;
       margin-top: 20px;
       overflow-x: auto;
     }
     @include e(header-item){
       background: linear-gradient(to bottom, #e9a9a9, #ffffff);
-      flex: 0 0 100px;
+      flex: 0 0 30%;
       text-align: center;
       border-radius: 10px;
       padding: 15px 0;
-      margin-right: 20px;
       @include when(down){
         background: linear-gradient(to bottom, #bdddc3, #ffffff);
       }
@@ -189,6 +249,50 @@
         color: #d82f2f;
       }
     }
+    @include e(box){
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      margin-top: 30px;
+    }
+    @include e(box-item){
+      display: flex;
+      align-items: center;
+      border: 1px solid #c9c9c9;
+      padding: 10px 10px;
+      flex: 0 0 130px;
+      justify-content: center;
+      border-radius: 10px;
+    }
+    @include e(box-item-name){
+      font-size: 16px;
+      margin-right: 5px;
+    }
+
+    @include e(northCapital){
+      padding: 0 20px;
+      margin-top: 20px;
+    }
+    @include e(northCapital-title){
+      display: flex;
+      align-items: flex-end;
+    }
+    @include e(northCapital-name){
+      font-size: 16px;
+      font-weight: 500;
+    }
+    @include e(northCapital-time){
+      font-size: 12px;
+      color: #8a8a8a;
+      flex: 1;
+      text-align: right;
+    }
+    @include e(northCapital-message){
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
     @include e(content){
       padding: 0 20px;
     }
@@ -207,6 +311,7 @@
       font-size: 12px;
       color: #c7bebe;
     }
+
     @include e(content-title-switch){
       display: flex;
       align-items: center;

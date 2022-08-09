@@ -75,7 +75,7 @@
       <div class="hp-mall-detail-talk-box">
         <div class="hp-mall-detail-talk-tab">
           <van-tabs active="{{ active }}">
-            <van-tab title="股评"></van-tab>
+            <!-- <van-tab title="股评"></van-tab> -->
             <van-tab title="短评"></van-tab>
           </van-tabs>
         </div>

@@ -1,0 +1,259 @@
+<template>
+  <div class="hp-mall-northBoundHold">
+    <div class="hp-mall-northBoundHold-stock">
+      <div class="hp-mall-northBoundHold-stock-title">
+        <div class="hp-mall-northBoundHold-stock-title-text">短线题材</div>
+        <div class="hp-mall-northBoundHold-stock-title-time">更新时间 {{current_time}}</div>
+      </div>
+      <van-tabs v-if="stockList.length>0" active="{{active}}" bind:change="onChange">
+        <van-tab v-for="stockList" title="{{item.limit_num + '板'}}" :name="item.limit_num"></van-tab>
+      </van-tabs>
+      <div class="hp-mall-northBoundHold-stock-box">
+        <div class="hp-mall-northBoundHold-stock-box-header">
+          <div class="hp-mall-northBoundHold-stock-box-headerone">排名</div>
+          <div class="hp-mall-northBoundHold-stock-box-headertwo">名称</div>
+          <div class="hp-mall-northBoundHold-stock-box-headerthree">行业</div>
+          <div class="hp-mall-northBoundHold-stock-box-headerfour">强度</div>
+          <div class="hp-mall-northBoundHold-stock-box-headerfive">概念</div>
+        </div>
+        <div class="hp-mall-northBoundHold-stock-list">
+          <div v-for="stockItemList" class="hp-mall-northBoundHold-stock-item">
+            <div class="hp-mall-northBoundHold-stock-item-count">{{index < 9 ? '0' + (index+1) : index + 1}}</div>
+            <div class="hp-mall-northBoundHold-stock-item-text">
+              <div class="hp-mall-northBoundHold-stock-item-text-name">{{item.name}}</div>
+              <div class="hp-mall-northBoundHold-stock-item-text-code">{{item.ts_code}}</div>
+            </div>
+            <div class="hp-mall-northBoundHold-stock-item-industry">{{item.industry}}</div>
+            <div class="hp-mall-northBoundHold-stock-item-strth">{{item.strth}}</div>
+            <div class="hp-mall-northBoundHold-stock-item-concept">{{item.concept}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../../common/eventHub';
+  import api from '../../utils/api'
+  // import testMixin from '../mixins/test'
+
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+    mixins: [],
+
+    data: {
+      stockList: [],
+      stockItemList: [],
+
+      current_time: '',
+      isSwitch: false,
+
+      active: '7',
+    },
+
+    async onLoad() {
+      this.getTradeLimitCurrent()
+      // await this.getStockEmHoldStockDf('')
+    },
+
+    methods: {
+      //获取涨停板数据
+      async getTradeLimitCurrent() {
+        let data =await wx.cloud.callFunction({
+          name: 'get_trade_limit_current',
+          data: {}
+        })
+        console.log(data.result.data)
+        let dataArr = [];
+        data.result.data.map(mapItem => {
+          if (dataArr.length == 0) {
+              dataArr.push({ limit_num: mapItem.limit_num, List: [mapItem] })
+          } else {
+            let res = dataArr.some(item=> {//判断相同日期，有就添加到当前项
+              if (item.limit_num == mapItem.limit_num) {
+                item.List.push(mapItem)
+                return true
+              }
+            })
+            if (!res) {//如果没找相同日期添加一个新对象
+              dataArr.push({ limit_num: mapItem.limit_num, List: [mapItem] })
+            }
+          }
+        })
+        this.stockItemList = dataArr[0].List.map(item => {
+          item.strth = parseFloat(item.strth).toFixed(2)
+          return item
+        })
+        this.stockItemList = this.stockItemList.sort(this.compare('strth'))
+        this.stockList = dataArr
+        this.active = dataArr[0].limit_num + '板'
+        this.current_time = dataArr[0].List[0].update_time.substring(0,10)
+      },
+
+      compare(property){
+        return function (obj1,obj2){
+          return obj2[property]-obj1[property];
+        }
+      },
+      async onChange(event) {
+        this.active = event.$wx.detail.name
+        let index = this.stockList.findIndex(item => item.limit_num == this.active)
+        console.log(this.stockList[index].List)
+        this.stockItemList = this.stockList[index].List.map(item => {
+          item.strth = parseFloat(item.strth).toFixed(2)
+          return item
+        })
+        this.stockItemList = this.stockItemList.sort(this.compare('strth'))
+      },
+      //获取北向资金增持
+      async getStockEmHoldStockDf() {
+        wx.showLoading({title: '数据较大请耐心等待...'})
+        this.stockList = []
+        this.isSwitch = true
+        let data =await wx.cloud.callFunction({
+          name: 'get_em_add_stock_df',
+          data: {
+            date: this.active,
+          }
+        })
+        this.stockList = JSON.parse(data.result).data.result
+        this.current_time = JSON.parse(data.result).data.current_time
+        wx.hideLoading()
+        this.isSwitch = false
+      },
+    },
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '短线题材',
+    usingComponents: {
+      "van-button": "../../components/vant/button/index",
+      "van-search": "../../components/vant/search/index",
+      "van-image": "../../components/vant/image/index",
+      "van-tag": "../../components/vant/tag/index",
+      "van-loading": "../../components/vant/loading/index",
+      "van-tab": "../../components/vant/tab/index",
+      "van-tabs": "../../components/vant/tabs/index",
+      "van-overlay": "../../components/vant/overlay/index"
+    }
+}
+</config>
+
+<style lang="scss">
+@import "../../scss/output.scss";
+  @include b(northBoundHold){
+    @include e(stock){
+    }
+    @include e(stock-title){
+      display: flex;
+      align-items: flex-end;
+      padding: 20px 20px 0 20px;
+
+    }
+    @include e(stock-title-text){
+      font-weight: 500;
+      font-size: 20px;
+      flex: 1;
+    }
+    @include e(stock-title-time){
+      font-weight: 300;
+      font-size: 14px;
+      color: #b4b3b3;
+    }
+    @include e(stock-box){
+      padding: 0 5px;
+    }
+    @include e(stock-box-header){
+      display: flex;
+      align-items: center;
+      font-weight: 400;
+      font-size: 14px;
+      color: #b4b3b3;
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    @include e(stock-box-headerone){
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-box-headertwo){
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-box-headerthree){
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-box-headerfour){
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-box-headerfive){
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-list){
+      padding-top: 20px;
+      padding-bottom: 30px;
+    }
+    @include e(stock-item){
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    @include e(stock-item-count){
+      font-size: 20px;
+      font-weight: 500;
+      color: #b4b3b3;
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-item-text){
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-item-text-name){
+      font-weight: 500;
+      font-size: 14px;
+    }
+    @include e(stock-item-text-code){
+      font-weight: 400;
+      font-size: 12px;
+      color: #b4b3b3;
+    }
+    @include e(stock-item-industry){
+      font-weight: 400;
+      font-size: 12px;
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-item-strth){
+      font-weight: 400;
+      font-size: 12px;
+      width: 20%;
+      text-align: center;
+    }
+    @include e(stock-item-concept){
+      font-weight: 400;
+      font-size: 10px;
+      width: 20%;
+      text-align: center;
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

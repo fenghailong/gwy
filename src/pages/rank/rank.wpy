@@ -24,7 +24,7 @@
           <div class="hp-mall-rank-stock-item-text">大宗交易活跃A股</div>
           <div class="hp-mall-rank-stock-item-arrow">></div>
         </div>
-        <div class="hp-mall-rank-stock-item" @click="toDetail">
+        <!-- <div class="hp-mall-rank-stock-item" @click="toDetail">
           <div class="hp-mall-rank-stock-item-icon">
             <image src="../../assets/images/nouth.png" mode="scaleToFill" lazy-load="false"></image>
           </div>
@@ -37,7 +37,7 @@
           </div>
           <div class="hp-mall-rank-stock-item-text">龙虎榜-营业上榜统计</div>
           <div class="hp-mall-rank-stock-item-arrow">></div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
